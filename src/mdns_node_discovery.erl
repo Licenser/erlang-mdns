@@ -82,6 +82,7 @@ init([{ttl, TTL} | T], State) ->
 init([_ | T], State) ->
     init(T, State);
 init([], #state{port = Port, address = Address} = State) ->
+    lager:info("mdns:init: ~p", [State]),
     {ok, Socket} = gen_udp:open(Port, [{reuseaddr, true},
 				       {multicast_if, multicast_if()},
 				       {ip, Address}]),
@@ -147,6 +148,7 @@ announce(State) ->
     announce(Names, Hostname, State).
 
 announce(Names, Hostname, #state{address = Address, port = Port, socket = Socket} = State) ->
+    lager:info("mdns:announce: Names: ~p, Hostname: ~p", [Names, Hostname]),
     Message = message(Names, Hostname, State),
     gen_udp:send(Socket,
 		 Address,
@@ -170,6 +172,7 @@ header() ->
 			  {rcode,0}]).
 
 answers(Names, Hostname, #state{type = Type, domain = Domain, ttl = TTL} = State) ->
+    lager:info("mdns:answer: Names: ~p, Hostname: ~p", [Names, Hostname]),
     [inet_dns:make_rr([{type, ptr},
 		       {domain, Type ++ Domain},
 		       {class, in},
@@ -198,6 +201,3 @@ texts(Names, Hostname, #state{ttl = TTL} = State) ->
     
 instance(Node, Hostname, #state{type = Type, domain = Domain}) ->
     Node ++ "@" ++ Hostname ++ "." ++ Type ++ Domain.
-
-
-

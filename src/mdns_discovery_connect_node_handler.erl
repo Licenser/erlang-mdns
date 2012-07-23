@@ -34,6 +34,7 @@ terminate(Error, State) ->
 			       {state, State}]).
 
 handle_event({node_advertisement, Node}, State) ->
+    lager:info("mdns:node_advertisement: ~p", [Node]),
     true = net_kernel:connect_node(Node),
     {ok, State}.
 
