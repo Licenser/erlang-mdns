@@ -142,7 +142,7 @@ is_running_multicast_interface(Flags) ->
 	lists:member(running, Flags) andalso
 	lists:member(multicast, Flags).
 
-announce(State) ->
+announce(#state{domain = Domain} = State) ->
     {ok, Names} = net_adm:names(),
     {ok, Hostname} = inet:gethostname(),
     HostnameWithDomain = 
