@@ -72,13 +72,13 @@ init([], #state{address = Address, port = Port} = State) ->
     lager:info("mdns:init_discovery_server: ~p.",
 	       [State]),
     {ok, Socket} = gen_udp:open(Port, [{mode, binary},
-					{reuseaddr, true},
-					{ip, Address},
-					{multicast_ttl, 4},
-					{multicast_loop, true},
-					{broadcast, true},
-					{add_membership, {Address, {0, 0, 0, 0}}},
-					{active, once}]),
+				       {reuseaddr, true},
+				       {ip, Address},
+				       {multicast_ttl, 4},
+				       {multicast_loop, true},
+				       {broadcast, true},
+				       {add_membership, {Address, {0, 0, 0, 0}}},
+				       {active, once}]),
     ok = net_kernel:monitor_nodes(true),
     {ok, State#state{socket = Socket}}.
 
@@ -152,10 +152,17 @@ handle_record(_, msg, true, 'query', [], Answers, [], Resources, State) ->
 handle_record(_, msg, false, 'query', _, _, _, _, State) ->
     State.
 
-local_instances(State) ->
+local_instances(#state{domain = Domain} = State) ->
     {ok, Names} = net_adm:names(),
     {ok, Hostname} = inet:gethostname(),
-    [instance(Node, Hostname, State) || {Node, _} <- Names].
+    HostnameWithDomain = 
+	case re:run(Hostname, "\\.") of
+	    nomatch ->
+		Hostname ++ Domain;
+	    _ ->
+		Hostname
+	end,
+    [instance(Node, HostnameWithDomain, State) || {Node, _} <- Names].
 
 instance(Node, Hostname, #state{type = Type, domain = Domain}) ->
     Node ++ "@" ++ Hostname ++ "." ++ Type ++ Domain.
