@@ -145,7 +145,15 @@ is_running_multicast_interface(Flags) ->
 announce(State) ->
     {ok, Names} = net_adm:names(),
     {ok, Hostname} = inet:gethostname(),
-    announce(Names, Hostname, State).
+    HostnameWithDomain = 
+	case re:run(Hostname, "\\.") of
+	    nomatch ->
+		Hostname ++ "." ++ Domain;
+	    _ ->
+		Hostname
+	end,
+
+    announce(Names, HostnameWithDomain, State).
 
 announce(Names, Hostname, #state{address = Address, port = Port, socket = Socket} = State) ->
     lager:info("mdns:announce: Names: ~p, Hostname: ~p", [Names, Hostname]),
