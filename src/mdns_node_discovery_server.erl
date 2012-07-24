@@ -158,7 +158,7 @@ local_instances(#state{domain = Domain} = State) ->
     HostnameWithDomain = 
 	case re:run(Hostname, "\\.") of
 	    nomatch ->
-		Hostname ++ "." ++ Domain;
+		Hostname  ++ Domain;
 	    _ ->
 		Hostname
 	end,
