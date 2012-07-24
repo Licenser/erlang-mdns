@@ -198,13 +198,22 @@ services(Names, Hostname, #state{domain = Domain, ttl = TTL} = State) ->
 		       {ttl, TTL},
 		       {data, {0, 0, Port, Hostname ++ Domain}}]) || {Node, Port} <- Names].
 
-texts(Names, Hostname, #state{ttl = TTL} = State) ->
+texts(Names, Hostname, #state{ttl = TTL, domain = Domain} = State) ->
+    Hostname = net_adm:localhost(),
+    HostnameWithDomain = 
+	case re:run(Hostname, "\\.") of
+	    nomatch ->
+		Hostname  ++ Domain;
+	    _ ->
+		Hostname
+	end,
+
     [inet_dns:make_rr([{domain, instance(Node, Hostname, State)},
 		       {type, txt},
 		       {class, in},
 		       {ttl, TTL},
 		       {data, ["node=" ++ Node,
-			       "hostname=" ++ net_adm:localhost(),
+			       "hostname=" ++ HostnameWithDomain,
 			       "port=" ++ integer_to_list(Port)]}]) || {Node, Port} <- Names].
     
 instance(Node, Hostname, #state{type = Type, domain = Domain}) ->
