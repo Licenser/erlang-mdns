@@ -180,7 +180,12 @@ handle_advertisement([Answer | Answers], Resources, #state{discovered = Discover
 		false ->
 		    mdns_node_discovery_event:notify_node_advertisement(Node),
 		    mdns_node_discovery:advertise(),
-		    handle_advertisement(Answers, Resources, State#state{discovered = [Node | Discovered]});
+		    case lists:member(Node, nodes()) of
+			true ->
+			    handle_advertisement(Answers, Resources, State#state{discovered = [Node | Discovered]});
+			false ->
+			    handle_advertisement(Answers, Resources, State)
+		    end;
 		true ->
 		    handle_advertisement(Answers, Resources, State)
 	    end;

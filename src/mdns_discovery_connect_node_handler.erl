@@ -35,7 +35,12 @@ terminate(Error, State) ->
 
 handle_event({node_advertisement, Node}, State) ->
     lager:info("mdns:node_advertisement: ~p", [Node]),
-    true = net_kernel:connect_node(Node),
+    case net_kernel:connect_node(Node) of
+	true ->
+	    lager:info("mdns:node_advertisement: ok", []);
+	false ->
+	    lager:info("mdns:node_advertisement: error", [])
+	end,
     {ok, State}.
 
 handle_info({'EXIT', _, shutdown}, _) ->
