@@ -199,7 +199,6 @@ services(Names, Hostname, #state{domain = Domain, ttl = TTL} = State) ->
 		       {data, {0, 0, Port, Hostname ++ Domain}}]) || {Node, Port} <- Names].
 
 texts(Names, Hostname, #state{ttl = TTL, domain = Domain} = State) ->
-    Hostname = net_adm:localhost(),
     HostnameWithDomain = 
 	case re:run(Hostname, "\\.") of
 	    nomatch ->
