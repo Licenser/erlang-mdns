@@ -182,8 +182,10 @@ handle_advertisement([Answer | Answers], Resources, #state{discovered = Discover
 		    mdns_node_discovery:advertise(),
 		    case net_kernel:connect_node(Node) of
 			true ->
+			    lager:info("mdns:handle_advertisement: ok(~p)", [Node]),
 			    handle_advertisement(Answers, Resources, State#state{discovered = [Node | Discovered]});
 			false ->
+			    lager:info("mdns:handle_advertisement: error(~p)", [Node]),
 			    handle_advertisement(Answers, Resources, State)
 		    end;
 		true ->

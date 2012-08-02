@@ -39,8 +39,8 @@ handle_event({node_advertisement, Node}, State) ->
 	true ->
 	    lager:info("mdns:node_advertisement: ok", []);
 	false ->
-	    lager:info("mdns:node_advertisement: error", [])
-	end,
+	    lager:info("mdns:node_advertisement: error(~p)", [Node])
+    end,
     {ok, State}.
 
 handle_info({'EXIT', _, shutdown}, _) ->
