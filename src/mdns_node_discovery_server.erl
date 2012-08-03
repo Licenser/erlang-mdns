@@ -175,7 +175,7 @@ handle_advertisement([Answer | Answers], Resources, #state{discovered = Discover
 	    Node = node_and_hostname([{type(Resource), data(Resource)} || Resource <- Resources,
 									  domain(Resource) =:= data(Answer)]),
 %	    lager:info("mdns:handle_advertisement - Node: ~p <- ~p.", [Node, [{type(Resource), data(Resource)} || Resource <- Resources,
-									  domain(Resource) =:= data(Answer)]]),
+%									  domain(Resource) =:= data(Answer)]]),
 	    case lists:member(Node, Discovered) of
 		false ->
 		    mdns_node_discovery_event:notify_node_advertisement(Node),
