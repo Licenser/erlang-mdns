@@ -69,8 +69,8 @@ init([{type, Type} | T], State) ->
 init([_ | T], State) ->
     init(T, State);
 init([], #state{address = Address, port = Port} = State) ->
-    lager:info("mdns:init_discovery_server: ~p.",
-	       [State]),
+%    lager:info("mdns:init_discovery_server: ~p.",
+%	       [State]),
     {ok, Socket} = gen_udp:open(Port, [{mode, binary},
 				       {reuseaddr, true},
 				       {ip, Address},
@@ -89,10 +89,10 @@ handle_call(stop, _, State) ->
     {stop, normal, State}.
 
 handle_info({nodeup, Node}, State) ->
-    lager:info("mdns:nodeup: ~p.", [Node]),
+%    lager:info("mdns:nodeup: ~p.", [Node]),
     {noreply, State};
 handle_info({nodedown, Node}, #state{discovered = Discovered} = State) ->
-    lager:info("mdns:nodedown: ~p.", [Node]),
+%    lager:info("mdns:nodedown: ~p.", [Node]),
     {noreply, State#state{discovered = lists:delete(Node, Discovered)}};
 handle_info({udp, Socket, _, _, Packet}, S1) ->
     {ok, Record} = inet_dns:decode(Packet),
@@ -168,13 +168,13 @@ instance(Node, Hostname, #state{type = Type, domain = Domain}) ->
     Node ++ "@" ++ Hostname ++ "." ++ Type ++ Domain.
 
 handle_advertisement([Answer | Answers], Resources, #state{discovered = Discovered} = State) ->
-    lager:info("mdns:handle_advertisement - Answer: ~p.", [Answer]),
+%    lager:info("mdns:handle_advertisement - Answer: ~p.", [Answer]),
     case {type_domain(State), domain_type_class(Answer)} of
 	{TypeDomain, {TypeDomain, ptr, in}} ->
-	    lager:info("mdns:handle_advertisement - DomainType: ~p.", [TypeDomain]),
+%	    lager:info("mdns:handle_advertisement - DomainType: ~p.", [TypeDomain]),
 	    Node = node_and_hostname([{type(Resource), data(Resource)} || Resource <- Resources,
 									  domain(Resource) =:= data(Answer)]),
-	    lager:info("mdns:handle_advertisement - Node: ~p <- ~p.", [Node, [{type(Resource), data(Resource)} || Resource <- Resources,
+%	    lager:info("mdns:handle_advertisement - Node: ~p <- ~p.", [Node, [{type(Resource), data(Resource)} || Resource <- Resources,
 									  domain(Resource) =:= data(Answer)]]),
 	    case lists:member(Node, Discovered) of
 		false ->
@@ -182,18 +182,18 @@ handle_advertisement([Answer | Answers], Resources, #state{discovered = Discover
 		    mdns_node_discovery:advertise(),
 		    case net_kernel:connect_node(Node) of
 			true ->
-			    lager:info("mdns:handle_advertisement: ok(~p)", [Node]),
+%			    lager:info("mdns:handle_advertisement: ok(~p)", [Node]),
 			    handle_advertisement(Answers, Resources, State#state{discovered = [Node | Discovered]});
 			false ->
-			    lager:info("mdns:handle_advertisement: error(~p)", [Node]),
+%			    lager:info("mdns:handle_advertisement: error(~p)", [Node]),
 			    handle_advertisement(Answers, Resources, State)
 		    end;
 		true ->
 		    handle_advertisement(Answers, Resources, State)
 	    end;
 	_ ->
-	    lager:info("mdns:handle_advertisement - Unknown type: ~p vs ~p.", 
-		       [type_domain(State), domain_type_class(Answer)]),
+%	    lager:info("mdns:handle_advertisement - Unknown type: ~p vs ~p.", 
+%		       [type_domain(State), domain_type_class(Answer)]),
 	    handle_advertisement(Answers, Resources, State)
     end;
 handle_advertisement([], _, State) ->

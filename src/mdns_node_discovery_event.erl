@@ -26,11 +26,11 @@ add_handler(Handler) ->
     add_handler(Handler, []).
 
 add_handler(Handler, Args) ->
-    lager:info("mdns:add_handler: Handler: ~p", [Handler]),
+%    lager:info("mdns:add_handler: Handler: ~p", [Handler]),
     gen_event:add_handler(manager(), Handler, Args).
 
 notify_node_advertisement(Node) ->
-    lager:info("mdns:notify_node_advertisement: Name: ~p", [Node]),
+%    lager:info("mdns:notify_node_advertisement: Name: ~p", [Node]),
     notify(manager(), {node_advertisement, Node}).
 
 notify(Manager, Message) ->
