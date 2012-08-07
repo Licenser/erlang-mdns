@@ -16,7 +16,7 @@
 {application, mdns,
  [
   {description, "mDNS Erlang Node Discovery"},
-  {vsn, "0.1"},
+  {vsn, "0.1.0"},
   {registered, []},
   {applications, [
                   kernel,
